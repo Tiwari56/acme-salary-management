@@ -1,5 +1,3 @@
-from contextlib import asynccontextmanager
-
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -16,16 +14,12 @@ def create_app(settings: Settings | None = None, db: Database | None = None) -> 
     settings = settings or load_settings()
     db = db or Database(settings.database_url)
 
-    @asynccontextmanager
-    async def lifespan(app: FastAPI):
-        db.create_all()
-        if settings.auto_seed:
-            from app.seed import seed_if_empty
+    if settings.auto_seed:
+        from app.seed import seed_if_empty
 
-            seed_if_empty(db)
-        yield
+        db.init_hooks.append(seed_if_empty)
 
-    app = FastAPI(title="ACME Salary Management API", version="1.0.0", lifespan=lifespan)
+    app = FastAPI(title="ACME Salary Management API", version="1.0.0")
     app.state.db = db
 
     app.add_middleware(

@@ -32,3 +32,20 @@ def test_load_settings_from_env(monkeypatch):
     assert s.database_url == "postgresql+psycopg://h/db"
     assert s.auto_seed is True
     assert s.cors_origins == ("https://a.example", "https://b.example")
+
+
+def test_auto_seed_runs_once_on_first_request():
+    from fastapi.testclient import TestClient
+
+    from app.config import Settings
+    from app.db import Database
+    from app.main import create_app
+
+    db = Database("sqlite://")
+    calls = []
+    app = create_app(Settings("sqlite://", auto_seed=False, cors_origins=()), db=db)
+    db.init_hooks.append(calls.append)
+    with TestClient(app) as client:
+        assert client.get("/api/employees").status_code == 200  # tables created lazily
+        client.get("/api/employees")
+    assert calls == [db]
