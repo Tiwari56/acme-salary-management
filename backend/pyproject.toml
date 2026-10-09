@@ -2,7 +2,7 @@
 name = "salary-api"
 version = "0.1.0"
 description = "ACME salary management API"
-requires-python = ">=3.12"
+requires-python = ">=3.12,<3.13"
 dependencies = [
     "email-validator>=2.3.0",
     "fastapi>=0.143.0",
@@ -26,6 +26,7 @@ package = false
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+filterwarnings = ["ignore::DeprecationWarning:fastapi.testclient"]
 
 [tool.ruff]
 line-length = 100
