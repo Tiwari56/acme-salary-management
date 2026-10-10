@@ -168,7 +168,7 @@ function DistributionChart({ country, scopeLabel }: { country?: string; scopeLab
           dataKey="band"
           series={[{ name: 'employees', label: 'Employees', color: SERIES_COLOR }]}
           valueFormatter={(v) => formatNumber(v)}
-          gridAxis="y"
+          gridAxis="x"
           barProps={{ radius: [4, 4, 0, 0] }}
         />
       </QueryState>
