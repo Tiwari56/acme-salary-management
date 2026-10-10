@@ -78,13 +78,19 @@ SQLite has no `percentile_cont`, and we need medians. Options considered:
    testable pure functions. 10k rows ≈ 300 KB, aggregates in single-digit ms.
 3. Pre-computed materialised aggregates — premature at 10k rows.
 
-Chosen: **(2)**. Revisit at ~1M rows (switch to DB percentiles or materialised views behind the same
-service interface).
+Chosen: **(2)**. Measured ~20 ms at 10k and ~300 ms at 100k (see PERFORMANCE.md), so revisit past
+~50–100k rows: switch to DB percentiles or materialised views behind the same service interface.
+
+## Startup
+
+Table creation and optional auto-seed run lazily, once per process, on first DB use (thread-safe).
+Serverless runtimes don't reliably run ASGI lifespan events, and importing the app shouldn't touch
+the database.
 
 ## Seeding
 
 `python -m app.seed --count 10000 --seed 42`: deterministic (`random.Random(seed)`), bulk insert via
-`session.execute(insert(...), rows)` in one transaction (~1 s). Salaries are generated from a
+`session.execute(insert(...), rows)` in one transaction (~0.6 s). Salaries are generated from a
 job-level base (USD) × country cost-of-labour factor × noise, then converted to local currency and
 rounded — so the insights dashboard shows realistic, explainable patterns.
 
