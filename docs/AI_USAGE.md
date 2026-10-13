@@ -40,6 +40,7 @@ These are the useful part: what verification caught.
 | A sortable-header component was defined inside the page's render function (remounts on each render) | `oxlint` `react(static-components)` warning | Hoisted to module scope; added `aria-sort` while there |
 | Histogram drew vertical gridlines (Mantine's `gridAxis` naming is the opposite of the intuitive reading) | Looked at a screenshot of the real page | `gridAxis="x"` → horizontal lines to read counts against |
 | Validators were initially written as `classmethod(lambda …)`. It worked, but was unreadable | Self-review | Plain `@field_validator` methods |
+| Compact USD labels rendered `$10K` locally but `$10.0K` on Node 22: ICU versions differ when `minimumFractionDigits` is left implicit (browsers vary the same way) | First GitHub Actions run failed; reproduced locally on Node 22 | Set `minimumFractionDigits: 0` explicitly |
 | uv silently picked Python 3.14 while Vercel runs 3.12 | Noticed the venv path | Pinned `.python-version` = 3.12 and `requires-python <3.13` |
 
 ## Independent architecture check
