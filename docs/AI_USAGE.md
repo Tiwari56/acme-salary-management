@@ -42,6 +42,16 @@ These are the useful part: what verification caught.
 | Validators were initially written as `classmethod(lambda …)`. It worked, but was unreadable | Self-review | Plain `@field_validator` methods |
 | uv silently picked Python 3.14 while Vercel runs 3.12 | Noticed the venv path | Pinned `.python-version` = 3.12 and `requires-python <3.13` |
 
+## Independent architecture check
+
+After the build, [graphify](https://github.com/Graphify-Labs/graphify) built a knowledge graph of the
+repo ([KNOWLEDGE_GRAPH.md](KNOWLEDGE_GRAPH.md)). Clustering, done without any knowledge of the
+intended design, found the same layers as DESIGN.md: the three pure `domain/` modules as tight
+separate clusters, employees and insights each as their own service + router cluster, and no import
+cycles. That gives some evidence beyond the AI's own say-so that the code matches the stated
+architecture. The graph also surfaced its own limits (paths via shared stdlib imports), which are
+written up there rather than glossed over.
+
 ## Decisions deliberately kept human-owned
 
 - **Scope cuts** in REQUIREMENTS.md (no auth, no payroll engine, no pay-equity analysis) are
