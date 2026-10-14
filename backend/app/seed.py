@@ -184,11 +184,13 @@ def _history(rng: random.Random, emp_id: int, hire_date: date, current: int) -> 
     return changes
 
 
-def load(session: Session, data: SeedData, batch_size: int = 2_000) -> None:
-    for start in range(0, len(data.employees), batch_size):
-        session.execute(insert(Employee), data.employees[start : start + batch_size])
-    for start in range(0, len(data.salary_changes), batch_size):
-        session.execute(insert(SalaryChange), data.salary_changes[start : start + batch_size])
+def load(session: Session, data: SeedData, batch_size: int = 1_000) -> None:
+    # One multi-row INSERT ... VALUES per batch, not executemany: against a remote database
+    # (e.g. Neon at ~600 ms RTT) per-row round trips turned a 1 s seed into hours.
+    # 1,000 rows x 11 columns stays well under Postgres' and SQLite's bind-parameter limits.
+    for model, rows in ((Employee, data.employees), (SalaryChange, data.salary_changes)):
+        for start in range(0, len(rows), batch_size):
+            session.execute(insert(model).values(rows[start : start + batch_size]))
     if session.bind.dialect.name == "postgresql":
         # Explicit ids were inserted; move the sequence past them.
         session.execute(
