@@ -23,6 +23,8 @@ export function formatCompactUsd(amount: number): string {
     style: 'currency',
     currency: 'USD',
     notation: 'compact',
+    // Explicit minimum: older ICU versions (e.g. Node 22) otherwise render "$10.0K".
+    minimumFractionDigits: 0,
     maximumFractionDigits: 1,
   }).format(amount)
 }

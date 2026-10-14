@@ -12,6 +12,7 @@ TanStack Query · Vercel
 | [docs/DESIGN.md](docs/DESIGN.md) | Architecture, data model, API, key trade-offs |
 | [docs/PERFORMANCE.md](docs/PERFORMANCE.md) | Measured numbers at 10k employees and how it scales |
 | [docs/AI_USAGE.md](docs/AI_USAGE.md) | How AI tools were used, prompts, and where their output was corrected |
+| [docs/KNOWLEDGE_GRAPH.md](docs/KNOWLEDGE_GRAPH.md) | Knowledge graph of the codebase ([graphify](https://github.com/Graphify-Labs/graphify)): core abstractions, layers, doc-to-code traceability |
 
 ## What it does
 
@@ -93,5 +94,6 @@ frontend/src/
   features/        employees/, insights/
   lib/             formatting helpers
 api/index.py       Vercel function entrypoint
-docs/              requirements, design, performance, AI usage
+docs/              requirements, design, performance, AI usage, knowledge graph
+graphify-out/      generated knowledge graph (graph.html, GRAPH_REPORT.md, graph.json)
 ```
