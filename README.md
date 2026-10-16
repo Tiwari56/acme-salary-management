@@ -86,6 +86,20 @@ when the instance recycles, so use this for demos only.
 | `AUTO_SEED` | off | Seed 10k employees on first request if the DB is empty |
 | `CORS_ORIGINS` | `http://localhost:5173` | Only needed if UI and API are on different origins |
 
+## Demo video
+
+The demo video was recorded by a Playwright script ([scripts/demo-video/record.mjs](scripts/demo-video/record.mjs)).
+It drives Chrome through the main flows (search, filters, a salary change with its audit trail,
+add/delete, insights, the repo) and adds on-screen captions and a visible cursor.
+
+```bash
+cd scripts/demo-video && npm install && npx playwright-core install ffmpeg
+BASE_URL=http://localhost:4173 node record.mjs     # -> output/acme-pay-demo.mp4
+```
+
+The script changes data (it gives one employee a raise, adds an employee and deletes them), so
+point it at a local build or re-seed afterwards.
+
 ## Repository layout
 
 ```
@@ -101,5 +115,6 @@ frontend/src/
   lib/             formatting helpers
 api/index.py       Vercel function entrypoint
 docs/              requirements, design, performance, AI usage, knowledge graph
+scripts/demo-video Playwright script that records the demo video
 graphify-out/      generated knowledge graph (graph.html, GRAPH_REPORT.md, graph.json)
 ```
