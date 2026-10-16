@@ -48,6 +48,17 @@ Both slow paths are **linear scans** and grow ~10× per 10× rows:
 Neither is worth doing at the stated scale of 10,000 employees. Both are isolated in a single
 service function, so the change is local.
 
+## Production (Vercel + Neon)
+
+Measured from the developer's machine: `/api/health` ~0.74 s and `/api/insights/summary` ~0.85 s end
+to end. Most of that is network distance (a raw Postgres round trip from the same machine to Neon
+was ~0.6 s), not server time.
+
+Seeding the remote database first ran as `executemany`, which made one round trip per row: hours
+at that latency. The loader now sends one multi-row `INSERT … VALUES` per 1,000 rows (~35 statements),
+which seeds Neon in **63 s**. Locally on SQLite it went from 0.6 s to 1.9 s (building the larger
+statements costs more), a deliberate trade.
+
 ## Serverless notes
 
 - `NullPool` for Postgres: each function instance may be short-lived, so pooling is left to the

@@ -3,6 +3,8 @@
 A web app that lets ACME's HR Manager maintain salary data for ~10,000 employees across 8 countries,
 and answer "how do we pay people?" without spreadsheets.
 
+**Live:** https://acme-salary-management-amber.vercel.app (seeded with 10,000 employees)
+
 **Stack:** FastAPI · SQLAlchemy 2 · Postgres (prod) / SQLite (dev, tests) · React 19 · Mantine 9 ·
 TanStack Query · Vercel
 
@@ -59,16 +61,20 @@ build for both halves.
 ## Deploy (Vercel)
 
 One Vercel project serves the static UI and the API (`api/index.py` → FastAPI), configured in
-[vercel.json](vercel.json). Vercel's filesystem is ephemeral, so production data lives in Postgres:
+[vercel.json](vercel.json). `"framework": null` keeps Vercel from auto-detecting the repo as several
+separate FastAPI/Vite services. Vercel's filesystem is ephemeral, so production data lives in Postgres.
+The live deployment was set up entirely from the CLI:
 
-1. Import the repo into Vercel (framework preset: *Other*; build settings come from `vercel.json`).
-2. Add a Postgres database: *Storage → Neon* in the Vercel dashboard. This sets `DATABASE_URL`
-   (`postgres://…` URLs are normalised to the psycopg driver automatically).
-3. Seed it once from your machine:
-   ```bash
-   cd backend && DATABASE_URL='<neon url>' uv run python -m app.seed --reset
-   ```
-4. Deploy.
+```bash
+vercel link --yes --project acme-salary-management
+vercel integration add neon --name acme-salary-db   # provisions Neon, sets DATABASE_URL etc. on the project
+# seed once, over the direct (unpooled) connection
+cd backend && set -a && . ../.env.local && set +a
+DATABASE_URL="$DATABASE_URL_UNPOOLED" uv run python -m app.seed --reset
+cd .. && vercel deploy --prod
+```
+
+(`postgres://…` URLs are normalised to the psycopg driver automatically.)
 
 **Zero-setup demo mode:** without a database, set `DATABASE_URL=sqlite:////tmp/salary.db` and
 `AUTO_SEED=1`. Each serverless instance seeds itself on first request (~0.6 s), but edits are lost
