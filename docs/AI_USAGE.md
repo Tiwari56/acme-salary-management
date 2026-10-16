@@ -43,6 +43,7 @@ These are the useful part: what verification caught.
 | Compact USD labels rendered `$10K` locally but `$10.0K` on Node 22: ICU versions differ when `minimumFractionDigits` is left implicit (browsers vary the same way) | First GitHub Actions run failed; reproduced locally on Node 22 | Set `minimumFractionDigits: 0` explicitly |
 | Seeding production Neon stalled: `executemany` made one round trip per row (~0.6 s RTT means hours) | Seed ran >5 min; checked `pg_stat_activity` (session idle in transaction, waiting on client) and measured RTT | Multi-row `INSERT … VALUES` in 1k-row batches → 63 s |
 | Vercel's import flow detected three separate services (root FastAPI, backend FastAPI, Vite) and proposed a multi-service config | Screenshot of the Vercel import page | Deployed via CLI with `"framework": null` so the existing single-project `vercel.json` applies |
+| Demo-video script's text lookups matched its own caption overlay, and Mantine's dropdown list shares its input's label | Ran the full recording against a local build first instead of production | Captions rendered via a CSS pseudo-element; selects targeted by `combobox` role |
 | uv silently picked Python 3.14 while Vercel runs 3.12 | Noticed the venv path | Pinned `.python-version` = 3.12 and `requires-python <3.13` |
 
 ## Independent architecture check

@@ -24,3 +24,6 @@ graphify-out/.graphify_root
 .agents/
 .claude/skills/
 skills-lock.json
+
+# demo video recorder output
+scripts/demo-video/output/
