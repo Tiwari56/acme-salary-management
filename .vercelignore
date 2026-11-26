@@ -1,5 +1,0 @@
-backend/.venv
-backend/tests
-frontend/node_modules
-*.db
-docs
